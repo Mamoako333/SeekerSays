@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get on the list</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --green: #05C25A;
+    --green-deep: #009E46;
+    --ink: #06180C;
+    --paper: #FBFFF7;
+    --line: rgba(6,24,12,0.16);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    background: var(--green);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+
+  .noise{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.05;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 32px clamp(20px, 5vw, 56px);
+  }
+
+  .mark{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.02em;
+  }
+
+  .mark span{ opacity:0.55; font-weight:500; }
+
+  .tag{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    border:1px solid var(--ink);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+
+  main{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px clamp(20px, 5vw, 56px) 64px;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:960px;
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    align-items:center;
+  }
+
+  .pitch h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height:0.98;
+    letter-spacing:-0.02em;
+  }
+
+  .pitch h1 em{
+    font-style:normal;
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 6px;
+    text-decoration-color: var(--paper);
+  }
+
+  .pitch p{
+    margin-top:20px;
+    font-size:16px;
+    line-height:1.55;
+    max-width:38ch;
+    opacity:0.82;
+  }
+
+  .count{
+    margin-top:36px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--ink);
+    display:inline-block;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:0.4; transform:scale(0.75); }
+  }
+
+  form{
+    background: var(--paper);
+    border-radius: 20px;
+    padding: 36px;
+    box-shadow: 0 24px 60px -20px rgba(6,24,12,0.4);
+  }
+
+  .field{
+    margin-bottom:18px;
+  }
+
+  .field label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--green-deep);
+    margin-bottom:8px;
+  }
+
+  .field input{
+    width:100%;
+    border:none;
+    border-bottom: 1.5px solid var(--line);
+    background:transparent;
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    padding: 10px 2px;
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+
+  .field input::placeholder{ color: rgba(6,24,12,0.32); }
+
+  .field input:focus{
+    outline:none;
+    border-bottom-color: var(--green-deep);
+  }
+
+  .field.handle input{ padding-left: 18px; }
+  .field.handle{ position:relative; }
+  .field.handle::before{
+    content:"@";
+    position:absolute;
+    left:2px;
+    bottom:10px;
+    font-weight:600;
+    color: rgba(6,24,12,0.4);
+  }
+
+  button{
+    width:100%;
+    margin-top:8px;
+    padding:14px 18px;
+    border:none;
+    border-radius:10px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    transition: transform 0.12s ease, background 0.12s ease;
+  }
+
+  button:hover{ background: #123319; }
+  button:active{ transform: scale(0.98); }
+
+  .fineprint{
+    margin-top:14px;
+    font-size:11.5px;
+    line-height:1.5;
+    text-align:center;
+    opacity:0.5;
+  }
+
+  .success{
+    display:none;
+    text-align:center;
+    padding: 20px 4px 6px;
+  }
+
+  .success .check{
+    width:44px; height:44px;
+    margin: 0 auto 16px;
+    border-radius:50%;
+    background: var(--green);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .success h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    margin-bottom:8px;
+  }
+
+  .success p{
+    font-size:14px;
+    opacity:0.7;
+    line-height:1.5;
+  }
+
+  form.done .fields-block{ display:none; }
+  form.done .success{ display:block; }
+
+  footer{
+    text-align:center;
+    padding: 20px;
+    font-size:12px;
+    opacity:0.55;
+  }
+
+  @media (max-width: 760px){
+    .wrap{ grid-template-columns: 1fr; gap:36px; }
+    .pitch p{ max-width:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .dot{ animation:none; }
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<header>
+  <div class="mark">SeekerSays</div>
+  <div class="tag">Early access</div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="pitch">
+      <h1>Get on the <em>list</em>.</h1>
+      <p>Sign up to be notified when SeekerSays goes live! Real reviews and experiences—without any of the noise.</p>
+      <div class="count"><span class="dot"></span>Spots are limited</div>
+    </div>
+
+    <form id="signupForm" novalidate>
+      <div class="fields-block">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Jordan Lee" required>
+        </div>
+        <div class="field handle">
+          <label for="handle">TikTok / social handle</label>
+          <input id="handle" name="handle" type="text" placeholder="yourhandle" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@email.com" required>
+        </div>
+        <div class="field">
+          <label for="profession">Profession</label>
+          <input id="profession" name="profession" type="text" placeholder="What do you do?" required>
+        </div>
+        <button type="submit">Join the list</button>
+        <p class="fineprint">By joining, you agree to be contacted about early access.</p>
+      </div>
+
+      <div class="success">
+        <div class="check">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 12.5L9.5 18L20 6" stroke="#06180C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>You're on the list</h3>
+        <p>Thanks — we'll be in touch soon.</p>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>© 2026 · Made with care</footer>
+
+<script>
+  const form = document.getElementById('signupForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      form.reportValidity();
+      return;
+    }
+    form.classList.add('done');
+  });
+</script>
+
+</body>
+</html>
